@@ -9,7 +9,9 @@ router.post(
   '/',
   body('name').notEmpty().withMessage('El nombre del proyecto es obligatorio'),
   body('client').notEmpty().withMessage('El cliente es obligatorio'),
-  body('description').notEmpty().withMessage('La descripción es obligatoria'),
+  body('description')
+    .notEmpty()
+    .withMessage('La descripción del proyecto es obligatoria'),
   checkValidationErrors,
   ProjectController.createProject
 );
@@ -28,7 +30,9 @@ router.put(
   param('id').isMongoId().withMessage('Id no válido'),
   body('name').notEmpty().withMessage('El nombre del proyecto es obligatorio'),
   body('client').notEmpty().withMessage('El cliente es obligatorio'),
-  body('description').notEmpty().withMessage('La descripción es obligatoria'),
+  body('description')
+    .notEmpty()
+    .withMessage('La descripción del proyecto es obligatoria'),
   checkValidationErrors,
   ProjectController.updateProject
 );
@@ -41,6 +45,15 @@ router.delete(
 );
 
 /** Routes for tasks */
-router.post('/:projectId/tasks', validateProjectExists, TaskController.createTask);
+router.post(
+  '/:projectId/tasks',
+  validateProjectExists,
+  body('name').notEmpty().withMessage('El nombre de la tarea es obligatorio'),
+  body('description').notEmpty().withMessage('La descripción de la tarea es obligatoria'),
+  checkValidationErrors,
+  TaskController.createTask
+);
+
+router.get('/:projectId/tasks', validateProjectExists, TaskController.getProjectTasks);
 
 export default router;
