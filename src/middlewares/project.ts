@@ -14,11 +14,7 @@ declare global {
 }
 
 /** Middleware to validate that the project exists */
-export const validateProjectExists = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const projectExists = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectId } = req.params;
     const project = await Project.findById(projectId);
