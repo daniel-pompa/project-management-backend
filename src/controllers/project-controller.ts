@@ -8,7 +8,6 @@ export class ProjectController {
       await project.save();
       res.status(201).json({ message: 'Proyecto creado con éxito', project });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error al crear el proyecto' });
     }
   };
@@ -18,7 +17,6 @@ export class ProjectController {
       const projects = await Project.find({});
       res.status(200).json(projects);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error al obtener los proyectos' });
     }
   };
@@ -32,7 +30,6 @@ export class ProjectController {
       }
       res.status(200).json(project);
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error al obtener el proyecto' });
     }
   };
@@ -46,7 +43,6 @@ export class ProjectController {
       }
       res.status(200).json({ message: 'Proyecto actualizado con éxito', project });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error al actualizar el proyecto' });
     }
   };
@@ -60,7 +56,6 @@ export class ProjectController {
       }
       res.status(200).json({ message: 'Proyecto eliminado con éxito' });
     } catch (error) {
-      console.error(error);
       res.status(500).json({ message: 'Error al eliminar el proyecto' });
     }
   };
