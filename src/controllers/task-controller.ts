@@ -22,4 +22,20 @@ export class TaskController {
       res.status(500).json({ message: 'Error al obtener las tareas' });
     }
   };
+
+  static getTaskById = async (req: Request, res: Response) => {
+    try {
+      const { taskId } = req.params;
+      const task = await Task.findById(taskId);
+      if (!task) {
+        return res.status(404).json({ message: 'Tarea no encontrada' });
+      }
+      if (task.project.toString() !== req.project.id) {
+        return res.status(400).json({ message: 'Solicitud no válida' });
+      }
+      res.status(200).json({ task });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener la tarea' });
+    }
+  };
 }
