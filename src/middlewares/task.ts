@@ -27,3 +27,14 @@ export const taskExists = async (req: Request, res: Response, next: NextFunction
     res.status(500).json({ message: 'Error al obtener la tarea' });
   }
 };
+
+export const taskBelongsToProject = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.task.project.toString() !== req.project.id.toString()) {
+    return res.status(400).json({ message: 'Solicitud no válida' });
+  }
+  next();
+};

@@ -1,7 +1,12 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { ProjectController, TaskController } from '../controllers';
-import { checkValidationErrors, projectExists, taskExists } from '../middlewares';
+import {
+  checkValidationErrors,
+  projectExists,
+  taskBelongsToProject,
+  taskExists,
+} from '../middlewares';
 
 const router = Router();
 
@@ -58,6 +63,7 @@ router.post(
 router.get('/:projectId/tasks', TaskController.getProjectTasks);
 
 router.param('taskId', taskExists);
+router.param('taskId', taskBelongsToProject);
 
 router.get(
   '/:projectId/tasks/:taskId',
