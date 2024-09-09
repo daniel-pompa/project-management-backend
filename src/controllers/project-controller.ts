@@ -22,38 +22,30 @@ export class ProjectController {
   };
 
   static getProjectById = async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
-      const project = await Project.findById(id).populate('tasks');
-      if (!project) {
-        return res.status(404).json({ message: 'Proyecto no encontrado' });
-      }
-      res.status(200).json(project);
+      res.status(200).json(req.project);
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener el proyecto' });
     }
   };
 
   static updateProject = async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
-      const project = await Project.findByIdAndUpdate(id, req.body, { new: true });
-      if (!project) {
-        return res.status(404).json({ message: 'Proyecto no encontrado' });
-      }
-      res.status(200).json({ message: 'Proyecto actualizado con éxito', project });
+      req.project.name = req.body.name;
+      req.project.client = req.body.client;
+      req.project.description = req.body.description;
+      await req.project.save();
+      res
+        .status(200)
+        .json({ message: 'Proyecto actualizado con éxito', project: req.project });
     } catch (error) {
       res.status(500).json({ message: 'Error al actualizar el proyecto' });
     }
   };
 
   static deleteProject = async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
-      const project = await Project.findByIdAndDelete(id);
-      if (!project) {
-        return res.status(404).json({ message: 'Proyecto no encontrado' });
-      }
+      await req.project.deleteOne();
       res.status(200).json({ message: 'Proyecto eliminado con éxito' });
     } catch (error) {
       res.status(500).json({ message: 'Error al eliminar el proyecto' });
