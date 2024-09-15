@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import morgan from 'morgan';
 import { connectDB, corsConfig } from './config';
 import projectRoutes from './routes/project-routes';
 
@@ -11,8 +12,9 @@ connectDB();
 const app = express();
 
 // Middlewares
-app.use(cors(corsConfig));
-app.use(express.json());
+app.use(cors(corsConfig)); // To allow cross-origin requests
+app.use(morgan('dev')); // To log HTTP requests
+app.use(express.json()); // To parse JSON bodies
 
 // Routes
 app.use('/api/projects', projectRoutes);
