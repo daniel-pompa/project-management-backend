@@ -4,7 +4,8 @@
   "description": "Project Management Backend API REST",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon --exec ts-node src/index.ts"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev:api": "nodemon --exec ts-node src/index.ts --api"
   },
   "author": "Daniel",
   "license": "MIT",
