@@ -8,7 +8,7 @@ interface IEmail {
 
 export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: 'Daem Project Management" <admin@example.com>',
       to: user.email,
       subject: 'Confirma tu cuenta',
@@ -22,6 +22,5 @@ export class AuthEmail {
         <p>Si no creaste esta cuenta, ignora este correo.</p>
       `,
     });
-    console.log('Correo electrónico enviado: %s', info.messageId);
   };
 }
