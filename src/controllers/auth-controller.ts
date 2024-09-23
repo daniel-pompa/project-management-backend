@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express';
 import { Token, User } from '../models';
-import { generateToken, hashPassword } from '../utils';
+import { comparePasswords, generateToken, hashPassword } from '../utils';
 import { AuthEmail } from '../emails/AuthEmail';
-import token from '../models/Token';
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response) => {
@@ -45,7 +44,7 @@ export class AuthController {
       const tokenExists = await Token.findOne({ authToken: token });
       if (!tokenExists) {
         const error = new Error('Token no válido o caducado.');
-        return res.status(401).json({ message: error.message });
+        return res.status(404).json({ message: error.message });
       }
       const user = await User.findById(tokenExists.user);
       if (!user) {
@@ -57,6 +56,41 @@ export class AuthController {
       res.status(200).json({ message: 'Cuenta confirmada con exito.' });
     } catch (error) {
       res.status(500).json({ message: 'Error al confirmar la cuenta.' });
+    }
+  };
+
+  static login = async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error('Usuario no encontrado.');
+        return res.status(404).json({ message: error.message });
+      }
+      if (!user.confirmed) {
+        const token = new Token({
+          authToken: generateToken(),
+          user: user.id,
+        });
+        await token.save();
+        await AuthEmail.sendConfirmationEmail({
+          email: user.email,
+          name: user.name,
+          token: token.authToken,
+        });
+        const error = new Error(
+          'Cuenta no confirmada. Revisa tu correo electrónico para confirmarla.'
+        );
+        return res.status(401).json({ message: error.message });
+      }
+      const validPassword = await comparePasswords(password, user.password);
+      if (!validPassword) {
+        const error = new Error('Credenciales inválidas.');
+        return res.status(401).json({ message: error.message });
+      }
+      res.status(200).json({ message: 'Sesión iniciada con exito.' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al iniciar sesión.' });
     }
   };
 }
