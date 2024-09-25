@@ -93,4 +93,34 @@ export class AuthController {
       res.status(500).json({ message: 'Error al iniciar sesión.' });
     }
   };
+
+  static requestConfirmationCode = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error('El usuario no está registrado.');
+        return res.status(404).json({ message: error.message });
+      }
+      if (user.confirmed) {
+        const error = new Error('La cuenta ya está confirmada.');
+        return res.status(403).json({ message: error.message });
+      }
+      const token = new Token({
+        authToken: generateToken(),
+        user: user.id,
+      });
+      await AuthEmail.sendConfirmationEmail({
+        email: user.email,
+        name: user.name,
+        token: token.authToken,
+      });
+      await Promise.allSettled([user.save(), token.save()]);
+      res.status(200).json({
+        message: 'Se envió un nuevo código de confirmación a tu correo electrónico.',
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al solicitar el token.' });
+    }
+  };
 }
