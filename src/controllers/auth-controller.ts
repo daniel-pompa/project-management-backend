@@ -123,4 +123,30 @@ export class AuthController {
       res.status(500).json({ message: 'Error al solicitar el token.' });
     }
   };
+
+  static resetPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error('El usuario no está registrado.');
+        return res.status(404).json({ message: error.message });
+      }
+      const token = new Token({
+        authToken: generateToken(),
+        user: user.id,
+      });
+      await token.save();
+      await AuthEmail.sendPasswordResetEmail({
+        email: user.email,
+        name: user.name,
+        token: token.authToken,
+      });
+      res.status(200).json({
+        message: 'Se envió un nuevo código a tu correo electrónico.',
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al solicitar el token.' });
+    }
+  };
 }

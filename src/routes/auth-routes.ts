@@ -48,4 +48,11 @@ router.post(
   AuthController.requestConfirmationCode
 );
 
+router.post(
+  '/reset-password',
+  body('email').isEmail().withMessage('El correo electrónico no es válido'),
+  checkValidationErrors,
+  AuthController.resetPassword
+);
+
 export default router;
