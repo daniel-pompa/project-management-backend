@@ -10,7 +10,7 @@ export class AuthController {
       // Check if the user already exists
       const userExists = await User.findOne({ email });
       if (userExists) {
-        const error = new Error('Ya existe una cuenta con ese correo electrónico.');
+        const error = new Error('Ya existe una cuenta con ese correo electrónico');
         return res.status(409).json({ message: error.message });
       }
       // Create a new user and hash the password
@@ -30,8 +30,7 @@ export class AuthController {
       // Save the user and the token in the database
       await Promise.allSettled([user.save(), token.save()]);
       res.status(201).json({
-        message:
-          'Cuenta creada con éxito. Revisa tu correo electrónico para confirmarla.',
+        message: 'Cuenta creada con éxito. Revisa tu correo electrónico para confirmarla',
       });
     } catch (error) {
       res.status(500).json({ message: 'Error al crear la cuenta.' });
@@ -43,19 +42,19 @@ export class AuthController {
       const { token } = req.body;
       const tokenExists = await Token.findOne({ authToken: token });
       if (!tokenExists) {
-        const error = new Error('Token no válido o caducado.');
+        const error = new Error('Token no válido o caducado');
         return res.status(404).json({ message: error.message });
       }
       const user = await User.findById(tokenExists.user);
       if (!user) {
-        const error = new Error('Usuario no encontrado.');
+        const error = new Error('Usuario no encontrado');
         return res.status(404).json({ message: error.message });
       }
       user.confirmed = true;
       await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
-      res.status(200).json({ message: 'Cuenta confirmada con exito.' });
+      res.status(200).json({ message: 'Cuenta confirmada con exito' });
     } catch (error) {
-      res.status(500).json({ message: 'Error al confirmar la cuenta.' });
+      res.status(500).json({ message: 'Error al confirmar la cuenta' });
     }
   };
 
@@ -79,18 +78,18 @@ export class AuthController {
           token: token.authToken,
         });
         const error = new Error(
-          'Cuenta no confirmada. Revisa tu correo electrónico para confirmarla.'
+          'Cuenta no confirmada. Revisa tu correo electrónico para confirmarla'
         );
         return res.status(401).json({ message: error.message });
       }
       const validPassword = await comparePasswords(password, user.password);
       if (!validPassword) {
-        const error = new Error('Credenciales inválidas.');
+        const error = new Error('Credenciales inválidas');
         return res.status(401).json({ message: error.message });
       }
-      res.status(200).json({ message: 'Sesión iniciada con exito.' });
+      res.status(200).json({ message: 'Sesión iniciada con exito' });
     } catch (error) {
-      res.status(500).json({ message: 'Error al iniciar sesión.' });
+      res.status(500).json({ message: 'Error al iniciar sesión' });
     }
   };
 
@@ -99,11 +98,11 @@ export class AuthController {
       const { email } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        const error = new Error('El usuario no está registrado.');
+        const error = new Error('El usuario no está registrado');
         return res.status(404).json({ message: error.message });
       }
       if (user.confirmed) {
-        const error = new Error('La cuenta ya está confirmada.');
+        const error = new Error('La cuenta ya está confirmada');
         return res.status(403).json({ message: error.message });
       }
       const token = new Token({
@@ -117,10 +116,10 @@ export class AuthController {
       });
       await Promise.allSettled([user.save(), token.save()]);
       res.status(200).json({
-        message: 'Se envió un nuevo código de confirmación a tu correo electrónico.',
+        message: 'Se envió un nuevo código de confirmación a tu correo electrónico',
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error al solicitar el token.' });
+      res.status(500).json({ message: 'Error al solicitar el token' });
     }
   };
 
@@ -129,7 +128,7 @@ export class AuthController {
       const { email } = req.body;
       const user = await User.findOne({ email });
       if (!user) {
-        const error = new Error('El usuario no está registrado.');
+        const error = new Error('El usuario no está registrado');
         return res.status(404).json({ message: error.message });
       }
       const token = new Token({
@@ -143,10 +142,44 @@ export class AuthController {
         token: token.authToken,
       });
       res.status(200).json({
-        message: 'Se envió un nuevo código a tu correo electrónico.',
+        message: 'Se envió un nuevo código a tu correo electrónico',
       });
     } catch (error) {
-      res.status(500).json({ message: 'Error al solicitar el token.' });
+      res.status(500).json({ message: 'Error al solicitar el token' });
+    }
+  };
+
+  static verifyToken = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.body;
+      const tokenExists = await Token.findOne({ authToken: token });
+      if (!tokenExists) {
+        const error = new Error('Token no válido o caducado');
+        return res.status(404).json({ message: error.message });
+      }
+      res
+        .status(200)
+        .json({ message: 'Token verificado. Puedes establecer tu nueva contraseña' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al verificar el token' });
+    }
+  };
+
+  static resetPasswordWithToken = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      const { password } = req.body;
+      const tokenExists = await Token.findOne({ authToken: token });
+      if (!tokenExists) {
+        const error = new Error('Token no válido o caducado');
+        return res.status(404).json({ message: error.message });
+      }
+      const user = await User.findById(tokenExists.user);
+      user.password = await hashPassword(password);
+      await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
+      res.status(200).json({ message: 'Contrasena actualizada con exito' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al verificar el token' });
     }
   };
 }
