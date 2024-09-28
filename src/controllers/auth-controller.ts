@@ -1,6 +1,11 @@
 import type { Request, Response } from 'express';
 import { Token, User } from '../models';
-import { comparePasswords, generateToken, hashPassword } from '../utils';
+import {
+  comparePasswords,
+  generateJsonWebToken,
+  generateToken,
+  hashPassword,
+} from '../utils';
 import { AuthEmail } from '../emails/AuthEmail';
 
 export class AuthController {
@@ -87,7 +92,8 @@ export class AuthController {
         const error = new Error('Credenciales inválidas');
         return res.status(401).json({ message: error.message });
       }
-      res.status(200).json({ message: 'Sesión iniciada con exito' });
+      const jwt = generateJsonWebToken({ id: user.id });
+      res.status(200).json(jwt);
     } catch (error) {
       res.status(500).json({ message: 'Error al iniciar sesión' });
     }
