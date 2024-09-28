@@ -1,3 +1,4 @@
-export * from './validator';
+export * from './auth';
 export * from './project';
 export * from './task';
+export * from './validator';
