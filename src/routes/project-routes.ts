@@ -14,9 +14,11 @@ const router = Router();
 /** Middleware to validate that the project exists */
 router.param('projectId', projectExists);
 
+/** Apply authentication middleware to all routes under this router */
+router.use(authenticateUser);
+
 router.post(
   '/',
-  authenticateUser,
   body('name').notEmpty().withMessage('El nombre del proyecto es obligatorio'),
   body('client').notEmpty().withMessage('El cliente es obligatorio'),
   body('description')
