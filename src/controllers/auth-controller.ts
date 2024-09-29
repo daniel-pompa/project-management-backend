@@ -188,4 +188,8 @@ export class AuthController {
       res.status(500).json({ message: 'Error al verificar el token' });
     }
   };
+
+  static user = async (req: Request, res: Response) => {
+    return res.status(200).json(req.user);
+  };
 }

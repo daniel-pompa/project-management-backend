@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { AuthController } from '../controllers';
-import { checkValidationErrors } from '../middlewares';
+import { authenticateUser, checkValidationErrors } from '../middlewares';
 
 const router = Router();
 
@@ -81,5 +81,7 @@ router.post(
   checkValidationErrors,
   AuthController.resetPasswordWithToken
 );
+
+router.get('/user', authenticateUser, AuthController.user);
 
 export default router;

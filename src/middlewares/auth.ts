@@ -26,6 +26,7 @@ export const authenticateUser = async (
       const user = await User.findById(decoded.id).select('_id name email');
       if (user) {
         req.user = user;
+        next();
       } else {
         res.status(401).json({ message: 'No autorizado' });
       }
@@ -33,5 +34,4 @@ export const authenticateUser = async (
   } catch (error) {
     res.status(500).json({ message: 'Token no válido' });
   }
-  next();
 };
