@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
-import { ProjectController, TaskController } from '../controllers';
+import { ProjectController, TaskController, TeamMembersController } from '../controllers';
 import {
   authenticateUser,
   checkValidationErrors,
@@ -100,6 +100,30 @@ router.put(
   body('status').notEmpty().withMessage('El estado de la tarea es obligatorio'),
   checkValidationErrors,
   TaskController.updateTaskStatus
+);
+
+/** Routes for the development teams */
+router.post(
+  '/:projectId/team/find',
+  body('email').isEmail().toLowerCase().withMessage('El correo electrónico no es válido'),
+  checkValidationErrors,
+  TeamMembersController.findMemberByEmail
+);
+
+router.get('/:projectId/team', TeamMembersController.getProjectTeam);
+
+router.post(
+  '/:projectId/team',
+  body('id').isMongoId().withMessage('ID no válido'),
+  checkValidationErrors,
+  TeamMembersController.addTeamMemberById
+);
+
+router.delete(
+  '/:projectId/team/:userId',
+  param('userId').isMongoId().withMessage('ID no válido'),
+  checkValidationErrors,
+  TeamMembersController.removeTeamMemberById
 );
 
 export default router;
