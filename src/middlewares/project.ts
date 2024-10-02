@@ -21,7 +21,10 @@ export const projectExists = async (req: Request, res: Response, next: NextFunct
     if (!project) {
       return res.status(404).json({ message: 'Proyecto no encontrado' });
     }
-    if (project.manager.toString() !== req.user._id.toString()) {
+    if (
+      project.manager.toString() !== req.user.id.toString() &&
+      !project.team.includes(req.user.id)
+    ) {
       return res.status(401).json({ message: 'No autorizado' });
     }
     req.project = project;
