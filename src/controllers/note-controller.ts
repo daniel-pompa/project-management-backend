@@ -13,4 +13,13 @@ export class NoteController {
       res.status(500).json({ message: 'Error al crear la nota' });
     }
   };
+
+  static getTaskNotes = async (req: Request, res: Response) => {
+    try {
+      const notes = await Note.find({ task: req.task.id });
+      res.status(200).json({ notes });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener las notas' });
+    }
+  };
 }
