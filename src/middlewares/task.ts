@@ -38,3 +38,14 @@ export const taskBelongsToProject = async (
   }
   next();
 };
+
+export const hasAuthorization = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user.id.toString() !== req.project.manager.toString()) {
+    return res.status(401).json({ message: 'No autorizado' });
+  }
+  next();
+};

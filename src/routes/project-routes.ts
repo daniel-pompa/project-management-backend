@@ -4,6 +4,7 @@ import { ProjectController, TaskController, TeamMembersController } from '../con
 import {
   authenticateUser,
   checkValidationErrors,
+  hasAuthorization,
   projectExists,
   taskBelongsToProject,
   taskExists,
@@ -59,6 +60,7 @@ router.delete(
 /** Routes for tasks */
 router.post(
   '/:projectId/tasks',
+  hasAuthorization,
   body('name').notEmpty().withMessage('El nombre de la tarea es obligatorio'),
   body('description').notEmpty().withMessage('La descripción de la tarea es obligatoria'),
   checkValidationErrors,
@@ -80,6 +82,7 @@ router.get(
 
 router.put(
   '/:projectId/tasks/:taskId',
+  hasAuthorization,
   param('taskId').isMongoId().withMessage('Id no válido'),
   body('name').notEmpty().withMessage('El nombre de la tarea es obligatorio'),
   body('description').notEmpty().withMessage('La descripción de la tarea es obligatoria'),
@@ -89,6 +92,7 @@ router.put(
 
 router.delete(
   '/:projectId/tasks/:taskId',
+  hasAuthorization,
   param('taskId').isMongoId().withMessage('Id no válido'),
   checkValidationErrors,
   TaskController.deleteTask
