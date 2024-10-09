@@ -57,7 +57,7 @@ export class AuthController {
       }
       user.confirmed = true;
       await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
-      res.status(200).json({ message: 'Cuenta confirmada con exito' });
+      res.status(200).json({ message: 'Cuenta confirmada con éxito' });
     } catch (error) {
       res.status(500).json({ message: 'Error al confirmar la cuenta' });
     }
@@ -183,7 +183,7 @@ export class AuthController {
       const user = await User.findById(tokenExists.user);
       user.password = await hashPassword(password);
       await Promise.allSettled([user.save(), tokenExists.deleteOne()]);
-      res.status(200).json({ message: 'Contrasena actualizada con exito' });
+      res.status(200).json({ message: 'Contrasena actualizada con éxito' });
     } catch (error) {
       res.status(500).json({ message: 'Error al verificar el token' });
     }
@@ -191,5 +191,39 @@ export class AuthController {
 
   static user = async (req: Request, res: Response) => {
     return res.status(200).json(req.user);
+  };
+
+  static updateUserProfile = async (req: Request, res: Response) => {
+    try {
+      const { name, email } = req.body;
+      const userExists = await User.findOne({ email });
+      if (userExists && userExists.id.toString() !== req.user.id.toString()) {
+        const error = new Error('El correo electrónico ya está registrado');
+        return res.status(409).json({ message: error.message });
+      }
+      req.user.name = name;
+      req.user.email = email;
+      await req.user.save();
+      res.status(200).json({ message: 'Perfil actualizado con éxito' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al actualizar el perfil' });
+    }
+  };
+
+  static updateUserPassword = async (req: Request, res: Response) => {
+    try {
+      const { current_password, password } = req.body;
+      const user = await User.findById(req.user.id);
+      const isPasswordCorrect = await comparePasswords(current_password, user.password);
+      if (!isPasswordCorrect) {
+        const error = new Error('La contraseña actual es incorrecta');
+        return res.status(409).json({ message: error.message });
+      }
+      user.password = await hashPassword(password);
+      await user.save();
+      res.status(200).json({ message: 'Contraseña actualizada con éxito' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al actualizar la contraseña' });
+    }
   };
 }

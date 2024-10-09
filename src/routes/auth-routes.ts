@@ -84,4 +84,35 @@ router.post(
 
 router.get('/user', authenticateUser, AuthController.user);
 
+/** Routes for user profile management */
+router.put(
+  '/profile',
+  authenticateUser,
+  body('name').notEmpty().withMessage('El nombre es obligatorio'),
+  body('email').isEmail().withMessage('El correo electrónico no es válido'),
+  checkValidationErrors,
+  AuthController.updateUserProfile
+);
+
+router.post(
+  '/update-password',
+  authenticateUser,
+  body('current_password').notEmpty().withMessage('La contraseña actual es obligatoria'),
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('La contraseña debe tener al menos 8 caracteres')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/)
+    .withMessage(
+      'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial'
+    ),
+  body('confirm_password').custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error('Las contraseñas no coinciden');
+    }
+    return true;
+  }),
+  checkValidationErrors,
+  AuthController.updateUserPassword
+);
+
 export default router;
