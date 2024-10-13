@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, Types, PopulatedDoc } from 'mongoose';
-import { ITask } from './Task';
+import Task, { ITask } from './Task';
 import { IUser } from './User';
+import Note from './Note';
 
 export interface IProject extends Document {
   name: string;
@@ -22,6 +23,18 @@ const ProjectSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Middleware to delete all tasks associated with a project when the project is deleted
+ProjectSchema.pre('deleteOne', { document: true }, async function () {
+  const projectId = this._id;
+  if (!projectId) return;
+  const tasks = await Task.find({ project: projectId });
+  if (!tasks) return;
+  for (const task of tasks) {
+    await Note.deleteMany({ task: task.id });
+  }
+  await Task.deleteMany({ project: projectId });
+});
 
 const Project = mongoose.model<IProject>('Project', ProjectSchema);
 

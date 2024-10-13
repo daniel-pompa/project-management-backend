@@ -52,6 +52,7 @@ router.put(
     .notEmpty()
     .withMessage('La descripción del proyecto es obligatoria'),
   checkValidationErrors,
+  hasAuthorization,
   ProjectController.updateProject
 );
 
@@ -59,6 +60,7 @@ router.delete(
   '/:projectId',
   param('projectId').isMongoId().withMessage('Id no válido'),
   checkValidationErrors,
+  hasAuthorization,
   ProjectController.deleteProject
 );
 
