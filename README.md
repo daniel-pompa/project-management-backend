@@ -58,7 +58,24 @@ npm --version
 
 ## Project Structure
 
-The directory structure for the project is still being finalized. Once it is fully defined, this section will provide a comprehensive overview of how the project's files and components are organized, including details on the various directories.
+```bash
+├───📁 src/
+│   ├───📁 config/
+│   ├───📁 controllers/
+│   ├───📁 emails/
+│   ├───📁 middlewares/
+│   ├───📁 models/
+│   ├───📁 routes/
+│   ├───📁 utils/
+│   ├───📄 index.ts
+│   └───📄 server.ts
+├───📄 .env.template
+├───📄 LICENSE
+├───📄 package-lock.json
+├───📄 package.json
+├───📄 README.md
+└───📄 tsconfig.json
+```
 
 ## Installation
 
@@ -92,8 +109,82 @@ npm run dev
 
 ## API Documentation
 
+The API documentation is accessible via **Swagger UI**. Ensure that the server is running to access it at the following URL: [http://localhost:4000/docs](http://localhost:4000/docs).
+
+## Base URL
+
+The base URL for the API is: `http://localhost:4000/api`
+
+## Authentication
+
 > [!NOTE]
-> Detailed API documentation will be provided once it's implemented. Information on API endpoints, request and response formats, and other relevant details will be included.
+> Some endpoints require a Bearer token to be included in the Authorization header. The endpoints that require authentication are clearly indicated below.
+
+### Authentication and User Management Endpoints
+
+| Method | Endpoint                 | Description                                       | Auth Required        |
+|--------|--------------------------|---------------------------------------------------|----------------------|
+| POST   | `/create-account`        | Create a new user account.                        | No                   |
+| POST   | `/confirm-account`       | Confirm a user account using a token.             | No                   |
+| POST   | `/login`                 | Authenticate a user and return a JWT token.       | No                   |
+| POST   | `/request-code`          | Request a confirmation code for account recovery. | No                   |
+| POST   | `/reset-password`        | Initiate the password reset process.              | No                   |
+| POST   | `/verify-token`          | Verify a token used for password reset.           | No                   |
+| POST   | `/reset-password/{token}`| Reset password using the provided token.          | No                   |
+| GET    | `/user`                  | Get details of the authenticated user.            | Yes                  |
+| PUT    | `/profile`               | Update the authenticated user's profile.          | Yes                  |
+| POST   | `/update-password`       | Update the user's password.                       | Yes                  |
+| POST   | `/check-password`        | Verify if the provided password is correct.       | Yes                  |
+
+### Project Management Endpoints
+
+| Method | Endpoint                     | Description                                    | Auth Required        |
+|--------|------------------------------|------------------------------------------------|----------------------|
+| POST   | `/projects`                  | Create a new project.                          | Yes                  |
+| GET    | `/projects`                  | Retrieve all projects.                         | Yes                  |
+| GET    | `/projects/{projectId}`      | Retrieve a specific project by its ID.         | Yes                  |
+| PUT    | `/projects/{projectId}`      | Update a project.                              | Yes                  |
+| DELETE | `/projects/{projectId}`      | Delete a project.                              | Yes                  |
+
+### Task Management Endpoints
+
+| Method | Endpoint                                      | Description                                | Auth Required        |
+|--------|-----------------------------------------------|--------------------------------------------|----------------------|
+| POST   | `/projects/{projectId}/tasks`                 | Create a new task for a project.           | Yes                  |
+| GET    | `/projects/{projectId}/tasks`                 | Retrieve all tasks for a specific project. | Yes                  |
+| GET    | `/projects/{projectId}/tasks/{taskId}`        | Retrieve a specific task by its ID.        | Yes                  |
+| PUT    | `/projects/{projectId}/tasks/{taskId}`        | Update a task.                             | Yes                  |
+| DELETE | `/projects/{projectId}/tasks/{taskId}`        | Delete a task.                             | Yes                  |
+| PUT    | `/projects/{projectId}/tasks/{taskId}/status` | Update the status of a specific task.      | Yes                  |
+
+### Team Management Endpoints
+
+| Method | Endpoint                              | Description                                    | Auth Required        |
+|--------|---------------------------------------|------------------------------------------------|----------------------|
+| GET    | `/projects/{projectId}/team`          | Retrieve the team members for a project.       | Yes                  |
+| POST   | `/projects/{projectId}/team`          | Add a team member to a project.                | Yes                  |
+| DELETE | `/projects/{projectId}/team/{userId}` | Remove a team member from a project.           | Yes                  |
+| POST   | `/projects/{projectId}/team/find`     | Find a team member by their email.             | Yes                  |
+
+### Note Management Endpoints
+
+| Method | Endpoint                                              | Description                                         | Auth Required        |
+|--------|-------------------------------------------------------|-----------------------------------------------------|----------------------|
+| POST   | `/projects/{projectId}/tasks/{taskId}/notes`          | Create a new note for a specific task.              | Yes                  |
+| GET    | `/projects/{projectId}/tasks/{taskId}/notes`          | Retrieve all notes associated with a specific task. | Yes                  |
+| DELETE | `/projects/{projectId}/tasks/{taskId}/notes/{noteId}` | Delete a note.                                      | Yes                  |
+
+### Response Codes
+
+| Code  | Description                                                                |
+|-------|----------------------------------------------------------------------------|
+| 200   | OK - Request was successful.                                               |
+| 201   | Created - Resource created successfully.                                   |
+| 204   | No Content - Resource deleted successfully.                                |
+| 400   | Bad Request - Validation errors.                                           |
+| 401   | Unauthorized - User is not authenticated or does not have permission.      |
+| 404   | Not Found - Resource not found.                                            |
+| 409   | Conflict - Request could not be processed due to a conflict in the request |
 
 ## Contributing
 
