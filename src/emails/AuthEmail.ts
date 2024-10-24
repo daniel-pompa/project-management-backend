@@ -1,4 +1,4 @@
-import { transporter } from '../config/nodemailer';
+import sendgrid from '../config/sendgrid';
 
 interface IEmail {
   email: string;
@@ -8,15 +8,14 @@ interface IEmail {
 
 export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
-    await transporter.sendMail({
-      from: 'Daem Project Management <admin@example.com>',
+    const msg = {
       to: user.email,
+      from: 'info@daemsolutions.com',
       subject: 'Solicitud para confirmar tu cuenta',
-      text: 'Confirma tu cuenta en Daem',
       html: `
-        <h1>Bienvenido a Daem</h1>
+        <h1>Bienvenido a Daem Tech Solutions</h1>
         <p>Hola ${user.name}.</p>
-         <p>Gracias por registrarte en Daem. Para completar el proceso de creación de tu cuenta, por favor confirma tu dirección de correo electrónico.</p>
+        <p>Gracias por registrarte en Daem Tech Solutions. Para completar el proceso de creación de tu cuenta, por favor confirma tu dirección de correo electrónico.</p>
         <p>
           Haz clic en el siguiente enlace para confirmar tu cuenta:
           <a href="${process.env.REACT_APP_FRONTEND_URL}/auth/confirm-account">confirmar cuenta</a>
@@ -26,17 +25,22 @@ export class AuthEmail {
         <p>Si no solicitaste la creación de esta cuenta, simplemente ignora este correo.</p>
         <p>Atentamente,</p>
         <p>El equipo de Daem</p>
-
       `,
-    });
+    };
+
+    try {
+      await sendgrid.send(msg);
+      console.log('Correo de confirmación enviado exitosamente');
+    } catch (error) {
+      console.error('Error al enviar el correo de confirmación:', error);
+    }
   };
 
   static sendPasswordResetEmail = async (user: IEmail) => {
-    await transporter.sendMail({
-      from: 'Daem Project Management <admin@example.com>',
+    const msg = {
       to: user.email,
+      from: 'info@daemsolutions.com',
       subject: 'Solicitud para restablecer tu contraseña',
-      text: 'Restablecer tu contraseña en Daem',
       html: `
       <h1>Restablecer tu contraseña en Daem</h1>
       <p>Hola ${user.name}.</p>
@@ -51,6 +55,16 @@ export class AuthEmail {
       <p>Atentamente,</p>
       <p>El equipo de Daem</p>
     `,
-    });
+    };
+
+    try {
+      await sendgrid.send(msg);
+      console.log('Correo de restablecimiento de contraseña enviado con éxito');
+    } catch (error) {
+      console.error(
+        'Error al enviar el correo de restablecimiento de contraseña:',
+        error
+      );
+    }
   };
 }
