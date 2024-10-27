@@ -10,7 +10,7 @@ export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
     const msg = {
       to: user.email,
-      from: 'info@daemsolutions.com',
+      from: 'noreply@daemsolutions.com',
       subject: 'Solicitud para confirmar tu cuenta',
       html: `
         <h1>Bienvenido a Daem Tech Solutions</h1>
@@ -30,9 +30,12 @@ export class AuthEmail {
 
     try {
       await sendgrid.send(msg);
-      console.log('Correo de confirmación enviado exitosamente');
+      console.log('Correo de confirmación enviado con éxito');
     } catch (error) {
-      console.error('Error al enviar el correo de confirmación:', error);
+      console.error(
+        'Error al enviar el correo:',
+        error.response ? error.response.body : error
+      );
     }
   };
 

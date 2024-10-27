@@ -19,6 +19,11 @@ app.use(cors(corsConfig)); // To allow cross-origin requests
 app.use(morgan('dev')); // To log HTTP requests
 app.use(express.json()); // To parse JSON bodies
 
+// Path to the root of the application
+app.get('/', (req, res) => {
+  res.status(200).send('Server is up and running');
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
