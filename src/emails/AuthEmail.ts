@@ -42,7 +42,7 @@ export class AuthEmail {
   static sendPasswordResetEmail = async (user: IEmail) => {
     const msg = {
       to: user.email,
-      from: 'info@daemsolutions.com',
+      from: 'noreply@daemsolutions.com',
       subject: 'Solicitud para restablecer tu contraseña',
       html: `
       <h1>Restablecer tu contraseña en Daem</h1>
