@@ -1,5 +1,6 @@
 import { CorsOptions } from 'cors';
 
+// Configure CORS options
 export const corsConfig: CorsOptions = {
   origin: function (origin, callback) {
     // Allow all origins in development
@@ -12,13 +13,14 @@ export const corsConfig: CorsOptions = {
     if (process.argv[2] === '--api') {
       whitelist.push(undefined);
     }
-    // Log the origin to see what is being sent
-    console.log('CORS Origin:', origin);
     // Check if origin is in whitelist
     if (!origin || whitelist.includes(origin)) {
       callback(null, true);
     } else {
-      console.error('CORS error for origin:', origin); // Log the origin causing the issue
+      // Log CORS errors only in development
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('CORS error for origin:', origin);
+      }
       callback(new Error('Not allowed by CORS'));
     }
   },
