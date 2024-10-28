@@ -109,7 +109,16 @@ npm run dev
 
 ## API Documentation
 
-The API documentation is accessible via **Swagger UI**. Ensure that the server is running to access it at the following URL: [http://localhost:4000/docs](http://localhost:4000/docs).
+The API documentation is available via **Swagger UI**, providing a comprehensive reference for all endpoints and their usage. Access it through the following URLs:
+
+- **Development**: [localhost:4000/docs](http://localhost:4000/docs)
+
+> [!NOTE]
+> Ensure the server is running locally to access the documentation in development.
+
+- **Production**: [API Documentation](https://project-management-backend-kvhy.onrender.com/docs)
+
+In production, no additional setup is required, as the backend is deployed and continuously running on Render.
 
 ## Base URL
 
