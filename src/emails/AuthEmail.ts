@@ -1,4 +1,3 @@
-// TODO: Add my domain
 import transporter from '../config/nodemailer';
 
 interface IEmail {
